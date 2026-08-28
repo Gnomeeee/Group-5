@@ -22,24 +22,28 @@ app.get("/students", (req, res) => {
 });
 
 app.post("/students", (req, res) => {
-  const needStudent = req.body;
+  const newStudent = req.body;
 
-  students = [...students, needStudent];
+  students = [...students, newStudent];
 
-  res.send[needStudent];
+  res.send(newStudent);
 });
 
-app.post("/students/:id", (req, res) => {
-  const id = parseInt(req.params.id);
-  const student = students.find((student) => student.id === id);
+app.patch("/students/:id", (req, res) => {
+  const id = Number(req.params.id);
+  const updateStudentsData = req.body;
 
-  if (!student) {
-    return res.status(400).json({
-      message: "Student not found",
-    });
-  }
+  students = students.map((student) => {
+    if (student.id === id) {
+      return { ...student, ...updateStudentsData };
+    }
 
-  res.json(student);
+    return student;
+  });
+
+  const updatedStudents = students.find((student) => student.id === id);
+
+  res.json(updatedStudents);
 });
 
 app.get("/", (req, res) => {
