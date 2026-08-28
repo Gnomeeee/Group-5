@@ -37,13 +37,30 @@ app.patch("/students/:id", (req, res) => {
     if (student.id === id) {
       return { ...student, ...updateStudentsData };
     }
-
     return student;
   });
 
   const updatedStudents = students.find((student) => student.id === id);
 
-  res.json(updatedStudents);
+  res.send(updatedStudents);
+});
+
+app.delete("/students/:id", (req, res) => {
+  const id = Number(req.params.id);
+
+  const studentExist = students.some((student) => student.id === id);
+
+  if (!studentExist) {
+    return res.status(404).json({
+      message: "Student not found",
+    });
+  }
+
+  students = students.filter((student) => student.id !== id);
+
+  res.send({
+    message: "Student deleted successfully",
+  });
 });
 
 app.get("/", (req, res) => {
