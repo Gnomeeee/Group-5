@@ -4,7 +4,7 @@ const app = express();
 const port = 3000;
 
 let students = [
-  { id: 1, name: "John jeff dublin", age: 23, course: "Computer Science" },
+  { id: 1, name: "John Jeff Dublin", age: 23, course: "Computer Science" },
   {
     id: 2,
     name: "Marion Beri",
@@ -13,6 +13,7 @@ let students = [
   },
   { id: 3, name: "Jenneby Hito", age: 21, course: "Computer Science" },
   { id: 4, name: "Mitchielyn Gebarra", age: 23, course: "Computer Science" },
+  { id: 5, name: "Jelson Dumayan", age: 22, course: "Computer Science" },
 ];
 
 app.use(express.json());
