@@ -25,8 +25,8 @@ Content-Type: application/json
 ### 4. GET all students again — confirm the update stuck
 GET {{baseUrl}}/students
 
-### 5. DELETE student with id 20
-DELETE {{baseUrl}}/students/21
+### 5. DELETE student with id 22
+DELETE {{baseUrl}}/students/22
 
 ### 6. GET all students again — to confirm it's gone
 GET {{baseUrl}}/students
