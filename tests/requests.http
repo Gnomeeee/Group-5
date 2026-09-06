@@ -1,0 +1,43 @@
+@baseUrl = http://localhost:3000
+
+### 1. GET all students
+GET {{baseUrl}}/students
+
+### 2. POST a new student
+POST {{baseUrl}}/students
+Content-Type: application/json
+
+{
+  "id": 6,
+  "name": "Test Student",
+  "age": 20,
+  "course": "Computer Science"
+}
+
+### 3. PATCH (update) student with id 6
+PATCH {{baseUrl}}/students/6
+Content-Type: application/json
+
+{
+  "age": 21
+}
+
+### 4. GET all students again — confirm the update stuck
+GET {{baseUrl}}/students
+
+### 5. DELETE student with id 6
+DELETE {{baseUrl}}/students/6
+
+### 6. GET all students again — confirm it's gone
+GET {{baseUrl}}/students
+
+### 7. PATCH a student that doesn't exist — should return 404
+PATCH {{baseUrl}}/students/999
+Content-Type: application/json
+
+{
+  "age": 30
+}
+
+### 8. DELETE a student that doesn't exist — should return 404
+DELETE {{baseUrl}}/students/999
