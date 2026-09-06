@@ -8,14 +8,14 @@ POST {{baseUrl}}/students
 Content-Type: application/json
 
 {
-  "id": 6,
+  "id": 22,
   "name": "Test Student",
   "age": 20,
   "course": "Computer Science"
 }
 
-### 3. PATCH (update) student with id 6
-PATCH {{baseUrl}}/students/6
+### 3. PATCH (update) student with id 22
+PATCH {{baseUrl}}/students/22
 Content-Type: application/json
 
 {
@@ -25,10 +25,10 @@ Content-Type: application/json
 ### 4. GET all students again — confirm the update stuck
 GET {{baseUrl}}/students
 
-### 5. DELETE student with id 6
-DELETE {{baseUrl}}/students/6
+### 5. DELETE student with id 20
+DELETE {{baseUrl}}/students/21
 
-### 6. GET all students again — confirm it's gone
+### 6. GET all students again — to confirm it's gone
 GET {{baseUrl}}/students
 
 ### 7. PATCH a student that doesn't exist — should return 404
