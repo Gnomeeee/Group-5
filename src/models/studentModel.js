@@ -1,5 +1,7 @@
 import pool from "../config/db.js";
 
+const ALLOWED = ["name", "age", "course"];
+
 export const getAllStudents = async () => {
   const result = await pool.query("SELECT * FROM students ORDER BY id");
   return result.rows;
@@ -18,7 +20,7 @@ export const createStudent = async ({ name, age, course }) => {
 };
 
 export const updateStudent = async (id, fields) => {
-  const keys = Object.keys(fields);
+  const keys = Object.keys(fields).filter((k) => ALLOWED.includes(k));
   if (keys.length === 0) return getStudentById(id);
 
   const setClause = keys.map((key, i) => `${key} = $${i + 1}`).join(", ");

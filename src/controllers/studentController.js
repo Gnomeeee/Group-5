@@ -10,6 +10,27 @@ export const getStudents = async (req, res) => {
   }
 };
 
+export const getStudent = async (req, res) => {
+  try {
+    const id = Number(req.params.id);
+
+    if (!Number.isInteger(id) || id < 1) {
+      return res.status(400).json({ message: "Invalid student id" });
+    }
+
+    const student = await studentModel.getStudentById(id);
+
+    if (!student) {
+      return res.status(400).json({ message: "Student not found" });
+    }
+
+    res.send(student);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({message: "Failed to fetch student"})
+  }
+};
+
 export const addStudent = async (req, res) => {
   try {
     const newStudent = await studentModel.createStudent(req.body);
