@@ -21,7 +21,7 @@ Content-Type: application/json
 }
 
 ### Set this manually after running request 0b
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjQsInVzZXJuYW1lIjoianVhbmRlbGFjcnV6IiwiaWF0IjoxNzkwMzQwNzU3LCJleHAiOjE3OTAzNDQzNTd9.NEFBBGRK1hOKVKtDOMEBY5hdJ0gKNoPXaVgXe2TccZk
+@token = PASTE_TOKEN_HERE
 
 ### 1. GET all students
 GET {{baseUrl}}/students
