@@ -1,22 +1,49 @@
 @baseUrl = http://localhost:3000
 
-### 1. GET all students
-GET {{baseUrl}}/students
-
-### 2. POST a new student
-POST {{baseUrl}}/students
+### 0a. Register a new user
+POST {{baseUrl}}/auth/register
 Content-Type: application/json
 
 {
-  "id": 22,
+  "username": "juandelacruz",
+  "password": "juan123"
+}
+
+### 0b. Login — grab a token to use in the requests below
+# After running this, copy the "token" value from the response
+# and paste it into @token below.
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "username": "juandelacruz",
+  "password": "juan123"
+}
+
+### Set this manually after running request 0b
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjQsInVzZXJuYW1lIjoianVhbmRlbGFjcnV6IiwiaWF0IjoxNzkwMzQwNzU3LCJleHAiOjE3OTAzNDQzNTd9.NEFBBGRK1hOKVKtDOMEBY5hdJ0gKNoPXaVgXe2TccZk
+
+### 1. GET all students
+GET {{baseUrl}}/students
+Authorization: Bearer {{token}}
+
+### 2. POST a new student
+# @name createStudent
+POST {{baseUrl}}/students
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
   "name": "Test Student",
   "age": 20,
   "course": "Computer Science"
 }
 
-### 3. PATCH (update) student with id 22
-PATCH {{baseUrl}}/students/22
+### 3. PATCH (update) the student just created
+# Uses the id returned from request 2
+PATCH {{baseUrl}}/students/{{createStudent.response.body.id}}
 Content-Type: application/json
+Authorization: Bearer {{token}}
 
 {
   "age": 21
@@ -24,16 +51,20 @@ Content-Type: application/json
 
 ### 4. GET all students again — confirm the update stuck
 GET {{baseUrl}}/students
+Authorization: Bearer {{token}}
 
-### 5. DELETE student with id 22
-DELETE {{baseUrl}}/students/22
+### 5. DELETE the student created in request 2
+DELETE {{baseUrl}}/students/{{createStudent.response.body.id}}
+Authorization: Bearer {{token}}
 
 ### 6. GET all students again — to confirm it's gone
 GET {{baseUrl}}/students
+Authorization: Bearer {{token}}
 
 ### 7. PATCH a student that doesn't exist — should return 404
 PATCH {{baseUrl}}/students/999
 Content-Type: application/json
+Authorization: Bearer {{token}}
 
 {
   "age": 30
@@ -41,3 +72,4 @@ Content-Type: application/json
 
 ### 8. DELETE a student that doesn't exist — should return 404
 DELETE {{baseUrl}}/students/999
+Authorization: Bearer {{token}}
