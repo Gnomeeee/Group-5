@@ -1,56 +1,91 @@
-# How the System Works
+# Group-5 API
 
-This is a backend-only API (no frontend). Test it with Postman or any REST client.
+A REST API for managing student records, with JWT-based authentication and interactive Swagger documentation.
 
-The system now uses **JWT authentication** — `/students` routes are locked behind a login. You can't fetch, add, edit, or delete students without a valid token first.
+## Tech Stack
 
-## The flow
+- **Node.js** + **Express 5** — server and routing
+- **PostgreSQL** (`pg`) — database
+- **JWT** (`jsonwebtoken`) — authentication tokens
+- **bcrypt** — password hashing
+- **Swagger** (`swagger-jsdoc` + `swagger-ui-express`) — API documentation
+- **dotenv** — environment variable management
+- **nodemon** — dev auto-reload
+- **supertest** — testing
 
-**1. Register** (one-time, creates an account)
-```
-POST /auth/register
-Body: { "username": "...", "password": "..." }
-```
+## Setup
 
-**2. Log in** (returns a token)
-```
-POST /auth/login
-Body: { "username": "...", "password": "..." }
-```
-Response includes a `token` — copy it.
+### 1. Install dependencies
 
-**3. Use the token on any students request**
-
-In Postman: Authorization tab → Type: **Bearer Token** → paste the token.
-
-```
-GET    /students
-GET    /students/:id
-POST   /students
-PATCH  /students/:id
-DELETE /students/:id
+```bash
+npm install
 ```
 
-No token → `401 Unauthorized`. Wrong or expired token → `401` as well.
+### 2. Run the server
 
-**4. Log out** (invalidates the token)
+```bash
+npm run dev     # development, with auto-reload
+npm start        # production
 ```
-POST /auth/logout
-Authorization: Bearer <token>
+
+The server runs at `http://localhost:3000` (or your configured `PORT`).
+
+## API Documentation (Swagger)
+
+Once the server is running, open:
+
 ```
-Once logged out, that same token stops working on `/students` — a fresh login is needed to get a new one.
+http://localhost:3000/api-docs
+```
 
-## Endpoint summary
+This gives you an interactive UI to view and test every endpoint. For protected routes, click **Authorize** and paste a token as `Bearer <your_token>` (obtained from `/auth/login`).
 
-| Method | Route | Token needed? |
-|---|---|:---:|
-| POST | `/auth/register` | No |
-| POST | `/auth/login` | No |
-| POST | `/auth/logout` | Yes |
-| GET | `/students` | Yes |
-| GET | `/students/:id` | Yes |
-| POST | `/students` | Yes |
-| PATCH | `/students/:id` | Yes |
-| DELETE | `/students/:id` | Yes |
+## Authentication Flow
 
-Register → log in → paste the token into Authorization → everything under `/students` works. Log out and the token is immediately dead.
+1. **Register** — `POST /auth/register` with `{ username, password }`. Password is hashed with bcrypt before being stored.
+2. **Login** — `POST /auth/login` with the same credentials. Returns a signed JWT.
+3. **Use the token** — include it on protected requests as a header:
+   ```
+   Authorization: Bearer <token>
+   ```
+4. **Logout** — `POST /auth/logout` revokes the current token (stored in a `revoked_tokens` table), so it can no longer be used even before it expires.
+5. **Me** — `GET /auth/me` returns the currently authenticated user's info, based on the token.
+
+`requireAuth` middleware handles steps 3–5: it checks the header for a valid, non-revoked token before letting the request through.
+
+## Endpoints
+
+### Auth (`/auth`)
+
+| Method | Endpoint         | Auth required | Description                 |
+| ------ | ---------------- | ------------- | --------------------------- |
+| POST   | `/auth/register` | No            | Create a new user account   |
+| POST   | `/auth/login`    | No            | Log in and receive a JWT    |
+| POST   | `/auth/logout`   | Yes           | Revoke the current token    |
+| GET    | `/auth/me`       | Yes           | Get the current user's info |
+
+### Students (`/students`)
+
+| Method | Endpoint        | Auth required | Description                |
+| ------ | --------------- | ------------- | -------------------------- |
+| GET    | `/students`     | Yes           | List all students          |
+| GET    | `/students/:id` | Yes           | Get a single student by ID |
+| POST   | `/students`     | Yes           | Create a new student       |
+| PATCH  | `/students/:id` | Yes           | Update a student's fields  |
+| DELETE | `/students/:id` | Yes           | Delete a student           |
+
+All `/students` routes require a valid `Authorization: Bearer <token>` header.
+
+## Notes
+
+- `users` (login accounts) and `students` (roster records) are **separate, unrelated tables**. A username and a student name can look similar without being connected — there's no foreign key between them in the current schema.
+- Passwords are never stored or returned in plain text.
+- Revoked tokens are tracked in the database so logout takes effect immediately, even though the JWT itself remains technically valid until it expires.
+
+## Testing
+
+Manual endpoint testing can be done via:
+
+- The Swagger UI (`/api-docs`)
+- The `tests/requests.http` file
+- `npm test` (using `supertest` for automated tests)
